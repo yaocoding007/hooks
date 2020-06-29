@@ -1,5 +1,30 @@
 import { useState, useMemo } from 'react';
 
+/**
+ * 定义类型有两种方式：
+ * interface 和 type alias 类型别名
+ * interface 只能定义对象类型
+ *    可以实现接口的extends/ implements  merge
+ *    type alias 没有办法实现这些功能
+ * type 定义 组合类型??、交叉类型 ??、原始类型??
+ */
+
+/**
+ * 组合类型(联合类型)??
+ *   只能访问联合类型的所有类型里共有的成员
+ *   function foo(value: string, type: string | number) {}
+ *   需要类型保护！！！
+ *     类型断言 (<Fish>pet).swim()
+ *     自定义的类型守卫
+ *     typeof 类型守卫
+ *     instanceof 类型守卫
+ *
+ * 交叉类型?? 多个类型合并为一个类型， 包含了所需的所有类型的特性
+ *   <First & Second>
+ *
+ * 原始类型?? type Name = string;
+ */
+
 type IState = string | number | boolean | undefined;
 
 export interface Actions<T = IState> {
@@ -17,13 +42,13 @@ function useToggle<T = IState, U = IState>(
   reverseValue: U,
 ): [T | U, Actions<T | U>];
 
-function useToggle<D extends IState = IState, R extends IState = IState>(
-  defaultValue: D = false as D,
-  reverseValue?: R,
-) {
+function useToggle<
+  D extends IState = IState /* extends 是必须这么写吗？ */,
+  R extends IState = IState
+>(defaultValue: D = false as D, reverseValue?: R) {
   const [state, setState] = useState<D | R>(defaultValue);
   const reverseValueOrigin = useMemo(
-    () => (reverseValue === undefined ? !defaultValue : reverseValue) as D | R,
+    () => (reverseValue === undefined ? !defaultValue : reverseValue) as D | R, // as 断言
     [reverseValue],
   );
 
